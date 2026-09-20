@@ -174,3 +174,11 @@ main .katex-display {
 header.full-bleed:has(+ .full-bleed) {
   margin-bottom: 0;
 }
+
+/* The Cite button jumps to the BibTeX block at the foot of the page; glide
+   there rather than teleporting, and respect a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

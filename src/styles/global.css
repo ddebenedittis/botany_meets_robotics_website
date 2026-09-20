@@ -166,3 +166,11 @@ main .katex-display {
     @apply cursor-pointer;
   }
 }
+
+/* The header carries `mb-12` so body prose does not butt against it, but when
+   the next block is itself full-bleed — the abstract's HighlightedSection —
+   that margin shows through as a band of page background between the cover
+   video and the grey panel. Collapse it in exactly that case. */
+header.full-bleed:has(+ .full-bleed) {
+  margin-bottom: 0;
+}

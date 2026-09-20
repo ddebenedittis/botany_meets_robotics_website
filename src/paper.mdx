@@ -2,7 +2,7 @@
 title: "Botany Meets Robotics in Alpine Scree Monitoring"
 theme: device
 favicon: favicon.svg
-description: "A quadrupedal robot assists botanists in monitoring alpine scree habitats, published in IEEE Transactions on Field Robotics."
+description: "A quadrupedal robot assists botanists in monitoring alpine scree habitats, navigating the terrain autonomously and detecting the plant species that indicate the habitat's conservation status. Published in IEEE Transactions on Field Robotics, 2025."
 thumbnail: cover_pic.png
 ---
 
@@ -12,6 +12,7 @@ import Figure from "./components/Figure.astro";
 import Picture from "./components/Picture.astro";
 import Video from "./components/Video.astro";
 import TwoColumns from "./components/TwoColumns.astro";
+import Bibtex from "./components/Bibtex.astro";
 
 import teaser from "./assets/teaser.webm";
 import missionCameras from "./assets/mission_cameras.webm";
@@ -30,7 +31,7 @@ import slippageBar from "./assets/slippage_bar.svg";
 
 <Header
   title="Botany Meets Robotics in Alpine Scree Monitoring"
-  conference="IEEE Transactions on Field Robotics"
+  conference="IEEE Transactions on Field Robotics, 2025"
   authors={[
     {
       name: "Davide De Benedittis",
@@ -245,6 +246,8 @@ Taken together, these advances enable a more frequent, cost-effective, and objec
 
 ## BibTeX citation
 
+<Bibtex>
+
 ```bibtex
 @article{debenedittis2025botany,
   author  = {De Benedittis, Davide and Di Lorenzo, Giovanni and Angelini, Franco
@@ -258,6 +261,8 @@ Taken together, these advances enable a more frequent, cost-effective, and objec
   doi     = {10.1109/TFR.2025.3632773}
 }
 ```
+
+</Bibtex>
 
 {/* TODO: no Code button — the paper's `code/` folder holds only the plotting
     scripts for its figures, and no public repository exists for it. Add one if

@@ -1,0 +1,263 @@
+---
+title: "Botany Meets Robotics in Alpine Scree Monitoring"
+theme: device
+favicon: favicon.svg
+description: "A quadrupedal robot assists botanists in monitoring alpine scree habitats, published in IEEE Transactions on Field Robotics."
+thumbnail: cover_pic.png
+---
+
+import Header from "./components/Header.astro";
+import HighlightedSection from "./components/HighlightedSection.astro";
+import Figure from "./components/Figure.astro";
+import Picture from "./components/Picture.astro";
+import Video from "./components/Video.astro";
+import TwoColumns from "./components/TwoColumns.astro";
+
+import teaser from "./assets/teaser.webm";
+import missionCameras from "./assets/mission_cameras.webm";
+import framework from "./assets/framework.webp";
+import screeTerrain from "./assets/scree_terrain.webp";
+import sensors from "./assets/sensors.webp";
+import missionGrid from "./assets/mission_grid.webp";
+import missionMap from "./assets/mission_map.webp";
+import missionSnapshots from "./assets/mission_snapshots.webp";
+import slippageSnapshots from "./assets/slippage_snapshots.webp";
+import vegCov from "./assets/veg_cov.webp";
+import nnInference from "./assets/nn_inference.webp";
+import monitoringTimes from "./assets/monitoring_times.webp";
+import inclinations from "./assets/inclinations.svg";
+import slippageBar from "./assets/slippage_bar.svg";
+
+<Header
+  title="Botany Meets Robotics in Alpine Scree Monitoring"
+  conference="IEEE Transactions on Field Robotics"
+  authors={[
+    {
+      name: "Davide De Benedittis",
+      url: "https://ddebenedittis.github.io/",
+      institution: "University of Pisa",
+      notes: ["*"],
+    },
+    { name: "Giovanni Di Lorenzo", institution: "University of Pisa" },
+    { name: "Franco Angelini", institution: "University of Pisa" },
+    { name: "Barbara Valle", institution: "University of Siena" },
+    { name: "Marina Serena Borgatti", institution: "University of Milan" },
+    { name: "Paolo Remagnino", institution: "Durham University" },
+    { name: "Marco Caccianiga", institution: "University of Milan" },
+    { name: "Manolo Garabini", institution: "University of Pisa" },
+  ]}
+  notes={[
+    { symbol: "*", text: "Corresponding author: davide.debenedittis@phd.unipi.it" },
+  ]}
+  links={[
+    {
+      name: "Paper",
+      url: "https://doi.org/10.1109/TFR.2025.3632773",
+      icon: "ri:file-pdf-2-line",
+    },
+    {
+      name: "arXiv",
+      url: "https://arxiv.org/abs/2511.12526",
+      icon: "academicons:arxiv",
+    },
+  ]}
+>
+  <Video slot="background" src={teaser} controls={false} />
+</Header>
+
+<HighlightedSection>
+
+## Abstract
+
+According to the European Union's Habitat Directive, habitat monitoring plays a critical role in response to the escalating problems posed by biodiversity loss and environmental degradation.
+Scree habitats, hosting unique and often endangered species, face severe threats from climate change due to their high-altitude nature.
+Traditionally, their monitoring has required highly skilled scientists to conduct extensive fieldwork in remote, potentially hazardous locations, making the process resource-intensive and time-consuming.
+This paper presents a novel approach for scree habitat monitoring using a legged robot to assist botanists in data collection and species identification.
+Specifically, we deployed the ANYmal C robot in the Italian Alpine bio-region in two field campaigns spanning two years and leveraged deep learning to detect and classify key plant species of interest.
+Our results demonstrate that agile legged robots can navigate challenging terrains and increase the frequency and efficiency of scree monitoring.
+When paired with traditional phytosociological surveys performed by botanists, this robotics-assisted protocol not only streamlines field operations but also enhances data acquisition, storage, and usage.
+The outcomes of this research contribute to the evolving landscape of robotics in environmental science, paving the way for a more comprehensive and sustainable approach to habitat monitoring and preservation.
+
+</HighlightedSection>
+
+## Why scree habitats are hard to monitor
+
+Scree habitats host endemic and rare species, and, like other high-altitude environments, they are particularly threatened by climate change, so that monitoring them also offers indirect insights into it.
+Under the Natura 2000 network, their conservation status is assessed by delimiting a plot of at least 16 m², identifying every plant species within it, and estimating ground cover — work that demands trained botanists in remote and potentially hazardous locations.
+Narrow seasonal windows, limited manpower, and challenging terrain have led to low spatial coverage and infrequent monitoring, while subjective estimates of vegetation cover and debris mobility introduce variability in data quality.
+
+Remote sensing covers wide areas cheaply but cannot reach the spatial resolution that in situ monitoring requires.
+Legged robots can: they collect high-resolution data in place, repeatedly, in terrain that is difficult even for people.
+
+<Figure>
+  <Picture slot="figure" src={screeTerrain} alt="Six photographs of the survey sites: loose stones, unstable boulders, obstacles, steep inclines, fog and rain, and grass-covered ground." />
+  <Fragment slot="caption">Terrain conditions the robot operates in: rock fragments of varying size, gaps between boulders, inclines above 40°, obstacles, grass and mud, and harsh, unstable weather.</Fragment>
+</Figure>
+
+## A robot-assisted monitoring protocol
+
+We deployed the quadrupedal robot ANYmal C to assist botanists during data acquisition and to analyze the collected data autonomously.
+The robot's actuation is based on series elastic actuators, whose structural softness proved fundamental for locomoting in the scree, and its sensor suite — a 360° lidar, GPS, four RGB-depth cameras, and wide-angle cameras — supplies both localization and the visual data used for plant identification and cover estimation.
+
+<Figure>
+  <Picture slot="figure" src={framework} alt="A cycle of five stages — mapping, monitoring, plant detection, vegetation cover, slippage metric — drawn over a photograph of the robot on an alpine slope." />
+  <Fragment slot="caption">Overview of the proposed monitoring framework.</Fragment>
+</Figure>
+
+<Figure>
+  <Picture slot="figure" src={sensors} alt="The ANYmal C robot with callouts marking the 360° lidar, the four depth cameras, and the front and rear wide-angle cameras." />
+  <Fragment slot="caption">Overview of the exteroceptive sensors equipped on the ANYmal C robot.</Fragment>
+</Figure>
+
+The protocol parallels the traditional workflow so the two remain comparable, and it runs in two stages.
+In the **mapping** stage an operator walks the robot briefly through the area to build a 3D point cloud; for scree sites about a minute, with little or no repositioning, was enough for reliable localization.
+In the **autonomous survey** stage a square grid covers the region of interest, and the robot visits waypoints spaced 1.0 m apart in a serpentine order, pausing at each one to capture synchronized still images while the onboard cameras record continuously.
+Because the grid is regular and obstacle-free, that serpentine path is a trivially optimal Hamiltonian traversal of the waypoints.
+Thanks to the robot's own localization, the manual plot delimitation that traditional monitoring requires is no longer necessary.
+
+Running the survey fully autonomously shortens mission time by removing operator reaction delays, guarantees repeatability, and frees the botanist for other activities — the three properties that scree monitoring needs in order to scale.
+
+<TwoColumns>
+  <Figure slot="left">
+    <Picture slot="figure" src={missionGrid} alt="A delimited scree plot photographed from above, with the survey grid in orange and the robot's waypoint path in blue superimposed on it." />
+    <Fragment slot="caption">The mission grid and the waypoint trajectory, superimposed on the delimited plot.</Fragment>
+  </Figure>
+  <Figure slot="right">
+    <Picture slot="figure" src={missionMap} alt="Lidar point cloud of the plot, coloured by terrain height, with the robot model visible inside it." />
+    <Fragment slot="caption">The lidar point cloud built during mapping; colour encodes terrain height.</Fragment>
+  </Figure>
+</TwoColumns>
+
+<Figure>
+  <Picture slot="figure" src={missionSnapshots} alt="The path actually followed by the robot across the plot, with several snapshots of the robot superimposed along it." />
+  <Fragment slot="caption">The real path followed during the monitoring mission, with snapshots of the robot along it.</Fragment>
+</Figure>
+
+<Figure>
+  <Video slot="figure" src={missionCameras} />
+  <Fragment slot="caption">An autonomous survey, with the views from the robot's depth cameras. The robot's low, wide-angle viewpoint differs from a standing botanist's and keeps the ground clearly visible.</Fragment>
+</Figure>
+
+## Habitat indicators from robot data
+
+Three indicators are computed offline from the recorded data.
+
+### Slippage metric
+
+Debris mobility is a key property of a scree habitat, and traditional guidelines assess it only qualitatively.
+ANYmal C has no contact sensors, so the probability that a foot is in stable contact is modelled as a sigmoid of the estimated vertical contact force,
+
+$$
+P(c_i = 1 \mid \boldsymbol{f}_i) = \frac{1}{1 + \exp(-\beta_1 f_{z,i} - \beta_0)}, \qquad i = 1, \dots, 4
+$$
+
+with the contact forces obtained from the robot's inverse dynamics and the sigmoid parameters learned with a logistic classifier.
+The slippage metric then integrates the velocity of each foot while it is in contact, normalized by the distance travelled by the base:
+
+$$
+s = \frac{\sum_{i=1}^{4} \int_{t_0}^{t_f} c_i(t)\, v_i(t)\, dt}{\int_{t_0}^{t_f} v_b(t)\, dt}
+$$
+
+<Figure>
+  <Picture slot="figure" src={slippageSnapshots} alt="Four close-ups of the robot's foot on loose rock, with a red overlay marking the stones that shifted between consecutive frames." />
+  <Fragment slot="caption">Terrain moving under the robot's feet during a mission; the red overlay marks the movement between two consecutive frames. The terrain moves significantly.</Fragment>
+</Figure>
+
+### Vegetation cover
+
+Vegetation cover is estimated from the robot's images with the Excess Green Index,
+
+$$
+\mathrm{ExGI} = 2\,\mathrm{G} - (\mathrm{R} + \mathrm{B})
+$$
+
+Pixels above a threshold count as vegetation, and the cover percentage is their ratio over the image.
+ExGI was chosen for its simplicity and because it has been shown to outperform other RGB-based indices.
+Against manual annotations it reached percentage errors below 1% in good light, and about 3% in low light — conditions in which the manual annotations themselves were unreliable.
+
+<Figure>
+  <Picture slot="figure" src={vegCov} alt="Two scree photographs next to their segmented versions, where green marks correctly detected vegetation, brown correctly detected background, and orange and cyan the errors." />
+  <Fragment slot="caption">Vegetation cover estimated with ExGI compared with manual annotation. Green is vegetation true positive, brown background true negative, orange false positive, cyan false negative; the two percentages are the ExGI estimate and the manual one.</Fragment>
+</Figure>
+
+### Plant species detection
+
+Under the Habitats Directive, Typical Species (TS) and Early Warning Species (EWS) indicate a habitat's conservation status.
+Following the Italian Interpretation Manual, we selected five TS — *Cerastium* spp., *Geum reptans* L., *Papaver alpinum* L., *Ranunculus glacialis* L. and *Saxifraga bryoides* L. T. — and one EWS, *Luzula alpinopilosa* Chaix Breistr., giving six classes.
+
+No dataset of scree plant species existed, so one was built during the two campaigns: 2823 images, taken by the robot's cameras and by operators from a similar viewpoint, each plant of interest boxed and labelled by a team of botanists.
+The detector is a YOLOv9 gelan-c model, trained for 300 epochs on a 2186/546/91 train/validation/test split, chosen because it is lightweight, robust to partial occlusion, and fast enough that future missions could adapt their path to the detections in real time.
+
+<Figure>
+  <Picture slot="figure" src={nnInference} alt="Four scree photographs with coloured bounding boxes and class labels drawn around the detected alpine plants." />
+  <Fragment slot="caption">Example images processed by the detection network.</Fragment>
+</Figure>
+
+## Results
+
+Across two field campaigns in Valfurva (Sondrio, Italy) in July 2022 and July 2023, within the Stelvio National Park, the robot reached the designated monitoring spots efficiently and securely, travelling roughly 1.2 km and 1.8 km on two of the survey days with net elevation changes of −85 m and +160 m.
+It handled slopes up to about 30° and unstable terrain using ANYmal's Trekker controller, a blind reinforcement-learning locomotion policy.
+Some plots were skipped for safety when unstable screes or block size made the advance too risky.
+
+Robotic surveys were consistently faster than traditional ones, and battery usage stayed low enough for several missions on a single charge.
+Average power draw barely varied across missions, regardless of slope and terrain slippage, so the controller locomotes efficiently even where the terrain is difficult.
+The two surveys differ in scope and output — the botanists performed a phytosociological survey — so the times are not a direct comparison.
+
+<Figure>
+  <Picture slot="figure" src={monitoringTimes} alt="Bar chart comparing the duration of robotic mapping and survey with traditional setup and survey, for six missions across the two campaigns." />
+  <Fragment slot="caption">Durations of the robotic and the traditional monitoring, including the mapping and setup phases respectively.</Fragment>
+</Figure>
+
+<TwoColumns>
+  <Figure slot="left">
+    <Picture slot="figure" src={inclinations} alt="Roll, pitch and total inclination of the terrain plane over time for six monitoring missions." />
+    <Fragment slot="caption">Terrain inclination during the missions, reaching about 30°.</Fragment>
+  </Figure>
+  <Figure slot="right">
+    <Picture slot="figure" src={slippageBar} alt="Bar chart of the normalized slippage measured during each of the six monitoring missions." />
+    <Fragment slot="caption">Normalized slippage measured during each mission.</Fragment>
+  </Figure>
+</TwoColumns>
+
+On the test set the detector reached 0.791 precision and 0.726 mAP50 over all classes, with the easier species above 0.8 mAP50.
+In challenging detection scenarios mAP50 ≥ 0.6 and mAP50-95 ≥ 0.35 are considered good results, and there is no published network or public dataset for scree species against which to benchmark.
+
+| Class | Precision | Recall | mAP50 | mAP50-95 |
+| --- | --- | --- | --- | --- |
+| All | 0.791 | 0.633 | 0.726 | 0.423 |
+| *Cerastium* | 0.762 | 0.429 | 0.550 | 0.313 |
+| *Geum reptans* | 0.786 | 0.635 | 0.737 | 0.381 |
+| *Papaver alpinum* | 0.740 | 0.712 | 0.743 | 0.363 |
+| *Ranunculus glacialis* L. | 0.758 | 0.738 | 0.809 | 0.489 |
+| *Saxifraga bryoides* L. T. | 0.838 | 0.755 | 0.824 | 0.576 |
+| *Luzula alpinopilosa* | 0.860 | 0.531 | 0.695 | 0.417 |
+
+## Conclusion
+
+Field trials showed that commercially available legged robots are operationally ready for scree terrains: they navigate steep, unstable ground and can cover target areas with low battery consumption.
+The efficacy of the approach rests on three elements together — robotic data collection in sites that are hard to reach or dangerous for human surveyors, phytosociological expertise to confirm plant identities and interpret ecological trends, and automated analysis through neural-network detection paired with quantitative vegetation-cover and slippage indicators.
+Trained botanists remain indispensable for comprehensive phytosociological surveys; the robot contributes high-frequency, high-resolution observations that can be analyzed offline.
+Taken together, these advances enable a more frequent, cost-effective, and objective mode of habitat assessment in high-altitude ecosystems.
+
+## BibTeX citation
+
+```bibtex
+@article{debenedittis2025botany,
+  author  = {De Benedittis, Davide and Di Lorenzo, Giovanni and Angelini, Franco
+             and Valle, Barbara and Borgatti, Marina Serena and Remagnino, Paolo
+             and Caccianiga, Marco and Garabini, Manolo},
+  journal = {IEEE Transactions on Field Robotics},
+  title   = {Botany Meets Robotics in Alpine Scree Monitoring},
+  year    = {2025},
+  volume  = {2},
+  pages   = {920-936},
+  doi     = {10.1109/TFR.2025.3632773}
+}
+```
+
+{/* TODO: no Code button — the paper's `code/` folder holds only the plotting
+    scripts for its figures, and no public repository exists for it. Add one if
+    the code or the plant-detection dataset is ever released. */}
+{/* TODO: the Related Work section and the Limitations and Future Work
+    subsection of the Discussion are deliberately omitted — a reader who wants
+    them clicks through to the PDF. */}
